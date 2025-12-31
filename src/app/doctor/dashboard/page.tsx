@@ -57,14 +57,14 @@ export default async function DoctorDashboard() {
                                     </div>
                                     <div className="mt-2 sm:flex sm:justify-between">
                                         <div className="sm:flex">
-                                            <p className="flex items-center text-sm text-gray-500">
+                                            <p className="flex items-center text-sm font-bold text-gray-900">
                                                 {booking.appointment_date ? new Date(booking.appointment_date).toLocaleString() : 'No Date'}
                                             </p>
                                         </div>
                                     </div>
                                 </li>
                             )) : (
-                                <li className="px-4 py-8 text-center text-gray-500">No bookings found.</li>
+                                <li className="px-4 py-8 text-center font-bold text-black">No bookings found.</li>
                             )}
                         </ul>
                     </div>

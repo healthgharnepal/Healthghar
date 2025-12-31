@@ -39,12 +39,12 @@ export default async function AdminDashboard() {
                         <h2 className="text-lg font-medium text-gray-900 mb-4">Add New Doctor</h2>
                         <form action={addDoctor} className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Full Name</label>
-                                <input name="fullName" type="text" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" />
+                                <label className="block text-sm font-medium text-gray-900">Full Name</label>
+                                <input name="fullName" type="text" required className="mt-1 block w-full rounded-md border-gray-400 shadow-sm p-2 border text-black placeholder-gray-500" />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700">Google Email</label>
-                                <input name="email" type="email" required className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 border" placeholder="doctor@gmail.com" />
+                                <label className="block text-sm font-medium text-gray-900">Google Email</label>
+                                <input name="email" type="email" required className="mt-1 block w-full rounded-md border-gray-400 shadow-sm p-2 border text-black placeholder-gray-500" placeholder="doctor@gmail.com" />
                             </div>
                             <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Add Doctor</button>
                         </form>
@@ -57,16 +57,16 @@ export default async function AdminDashboard() {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">Name</th>
+                                        <th className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">Email</th>
+                                        <th className="px-6 py-3 text-right text-xs font-bold text-black uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {doctors?.map((doc) => (
                                         <tr key={doc.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{doc.full_name}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.email}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-black">{doc.full_name}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{doc.email}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                                 <form action={async () => {
                                                     'use server'

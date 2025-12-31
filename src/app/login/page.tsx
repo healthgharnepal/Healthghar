@@ -22,18 +22,18 @@ export default function LoginPage() {
     return (
         <div className="flex h-screen w-full items-center justify-center bg-gray-50">
             <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-                <h1 className="mb-6 text-center text-2xl font-bold text-gray-900">Healthghar Login</h1>
+                <h1 className="mb-6 text-center text-2xl font-bold text-black">Healthghar Login</h1>
 
                 <button
                     onClick={handleLogin}
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-3 rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-3 rounded-lg bg-blue-600 px-4 py-3 font-medium text-white transition hover:bg-blue-700 disabled:opacity-50 font-bold"
                 >
                     {loading ? 'Redirecting...' : 'Sign in with Google'}
                 </button>
 
-                <div className="mt-8 text-center text-sm text-gray-500">
-                    <a href="/admin/login" className="hover:underline">Admin Login</a>
+                <div className="mt-8 text-center text-sm font-medium text-black">
+                    <a href="/admin/login" className="hover:underline hover:text-blue-800">Admin Login</a>
                 </div>
             </div>
         </div>

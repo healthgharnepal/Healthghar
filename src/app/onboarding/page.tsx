@@ -14,38 +14,38 @@ export default function OnboardingPage() {
 
                 <form action={completeProfile} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Age</label>
+                        <label className="block text-sm font-bold text-black">Age</label>
                         <input
                             name="age"
                             type="number"
                             required
-                            className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            className="mt-1 block w-full rounded-md border-2 border-gray-400 p-2 shadow-sm text-black font-medium focus:border-blue-600 focus:ring-blue-600"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                        <label className="block text-sm font-bold text-black">Phone Number</label>
                         <input
                             name="phone"
                             type="tel"
                             required
-                            className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            className="mt-1 block w-full rounded-md border-2 border-gray-400 p-2 shadow-sm text-black font-medium focus:border-blue-600 focus:ring-blue-600"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Address</label>
+                        <label className="block text-sm font-bold text-black">Address</label>
                         <textarea
                             name="address"
                             required
                             rows={3}
-                            className="mt-1 block w-full rounded-md border border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                            className="mt-1 block w-full rounded-md border-2 border-gray-400 p-2 shadow-sm text-black font-medium focus:border-blue-600 focus:ring-blue-600"
                         />
                     </div>
 
                     <button
                         type="submit"
-                        className="w-full rounded-md bg-blue-600 px-4 py-3 text-white transition hover:bg-blue-700"
+                        className="w-full rounded-md bg-blue-700 px-4 py-3 text-white font-bold transition hover:bg-blue-800 shadow-md"
                     >
                         Save & Continue
                     </button>
