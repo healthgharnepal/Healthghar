@@ -1,9 +1,7 @@
-import { createClient } from '@supabase/supabase-js' // Service client directly usually for server components if we want to bypass RLS, OR use an API route. 
-// Actually, here we are in a Server Component. We can use the service client.
-import { addDoctor, removeDoctor } from '@/app/admin/actions'
+import { createClient } from '@supabase/supabase-js'
 import { adminLogout } from '@/app/actions/auth-admin'
+import AdminClientView from './client-view'
 
-// We need a helper to get service client in Server Component
 const getService = () => createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -12,11 +10,36 @@ const getService = () => createClient(
 export default async function AdminDashboard() {
     const supabase = getService()
 
-    // Fetch Doctors
-    const { data: doctors } = await supabase.from('doctors').select('*').order('created_at', { ascending: false })
+    // Parallel fetching for performance
+    const [
+        { data: doctors },
+        { count: usersCount },
+        { data: homePackages },
+        { data: teleDoctors },
+        { data: bookingsHome },
+        { data: bookingsTele },
+        { data: upcomingCamps },
+        { data: bookingsCamp },
+        { data: memberships },
+        { data: teleSlots }
+    ] = await Promise.all([
+        supabase.from('doctors').select('*').order('created_at', { ascending: false }),
+        supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'user'),
 
-    // Fetch Users Count
-    const { count: usersCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'user')
+        supabase.from('home_checkup_packages').select('*').order('created_at', { ascending: false }),
+        supabase.from('telehealth_doctors').select('*').order('created_at', { ascending: false }),
+
+        supabase.from('home_checkup_bookings').select('*, home_checkup_packages(title)').order('created_at', { ascending: false }),
+        supabase.from('telehealth_bookings').select('*').order('created_at', { ascending: false }),
+
+        supabase.from('upcoming_camps').select('*').order('created_at', { ascending: false }),
+        supabase.from('camp_bookings').select('*').order('created_at', { ascending: false }),
+
+        supabase.from('camp_bookings').select('*').order('created_at', { ascending: false }),
+
+        supabase.from('membership_plans').select('*').order('created_at', { ascending: false }),
+        supabase.from('telehealth_slots').select('*').order('start_time', { ascending: true })
+    ])
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -33,60 +56,17 @@ export default async function AdminDashboard() {
             </nav>
 
             <main className="mx-auto max-w-7xl py-6 px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                    {/* Add Doctor Column */}
-                    <div className="bg-white p-6 shadow rounded-lg">
-                        <h2 className="text-lg font-medium text-gray-900 mb-4">Add New Doctor</h2>
-                        <form action={addDoctor} className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-900">Full Name</label>
-                                <input name="fullName" type="text" required className="mt-1 block w-full rounded-md border-gray-400 shadow-sm p-2 border text-black placeholder-gray-500" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-900">Google Email</label>
-                                <input name="email" type="email" required className="mt-1 block w-full rounded-md border-gray-400 shadow-sm p-2 border text-black placeholder-gray-500" placeholder="doctor@gmail.com" />
-                            </div>
-                            <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Add Doctor</button>
-                        </form>
-                    </div>
-
-                    {/* List Doctors Column */}
-                    <div className="lg:col-span-2 bg-white p-6 shadow rounded-lg">
-                        <h2 className="text-lg font-medium text-gray-900 mb-4">Authorized Doctors</h2>
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">Name</th>
-                                        <th className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">Email</th>
-                                        <th className="px-6 py-3 text-right text-xs font-bold text-black uppercase tracking-wider">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {doctors?.map((doc) => (
-                                        <tr key={doc.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-black">{doc.full_name}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{doc.email}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <form action={async () => {
-                                                    'use server'
-                                                    await removeDoctor(doc.id)
-                                                }}>
-                                                    <button className="text-red-600 hover:text-red-900">Remove</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {(!doctors || doctors.length === 0) && (
-                                        <tr>
-                                            <td colSpan={3} className="px-6 py-4 text-center text-sm text-gray-500">No doctors added yet.</td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                <AdminClientView
+                    doctors={doctors || []}
+                    homePackages={homePackages || []}
+                    homeBookings={bookingsHome || []}
+                    teleDoctors={teleDoctors || []}
+                    teleBookings={bookingsTele || []}
+                    teleSlots={teleSlots || []}
+                    camps={upcomingCamps || []}
+                    campBookings={bookingsCamp || []}
+                    memberships={memberships || []}
+                />
             </main>
         </div>
     )

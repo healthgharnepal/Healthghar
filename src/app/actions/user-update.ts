@@ -13,15 +13,19 @@ export async function updateProfile(formData: FormData) {
     }
 
     const age = formData.get('age')
-    const phone = formData.get('phone')
+    const countryCode = formData.get('countryCode')
+    const localPhone = formData.get('localPhone')
+    const fullPhone = `${countryCode}${localPhone}`.trim()
     const address = formData.get('address')
+    const gender = formData.get('gender')
 
     const { error } = await supabase
         .from('profiles')
         .update({
             age: Number(age),
-            phone: String(phone),
-            address: String(address)
+            phone: fullPhone,
+            address: String(address),
+            gender: String(gender)
         })
         .eq('id', user.id)
 

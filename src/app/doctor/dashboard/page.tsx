@@ -1,77 +1,54 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
+import { signout } from '@/app/login/actions'
+import ClientDashboard from './client'
 
 export default async function DoctorDashboard() {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
 
+    // 1. Check Auth
+    const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
         redirect('/login')
     }
 
-    // Double check role? Middleware handles it, but good to be safe.
-    const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
-    if (profile?.role !== 'doctor') {
-        redirect('/')
+    // 2. Check if User is a Doctor
+    const { data: doctor } = await supabase
+        .from('telehealth_doctors')
+        .select('*')
+        .eq('email', user.email)
+        .single()
+
+    if (!doctor) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-4">
+                <div className="bg-white p-8 rounded-xl shadow-md text-center max-w-md border border-red-100">
+                    <h1 className="text-2xl font-bold text-red-600 mb-2">Access Denied</h1>
+                    <p className="text-gray-600 mb-6">
+                        Your email <span className="font-mono bg-gray-100 px-2 py-1 rounded text-sm">{user.email}</span> is not registered as an authorized doctor.
+                    </p>
+                    <form action={signout}>
+                        <button className="bg-gray-800 text-white px-6 py-2 rounded-lg font-bold hover:bg-black transition-colors">
+                            Sign Out
+                        </button>
+                    </form>
+                </div>
+            </div>
+        )
     }
 
-    // Fetch bookings strictly for this doctor
-    // We need to join bookings with profile to get user names? Or just bookings.
-    // Note: RLS policies protect `bookings`. A doctor can only see their own.
-    // So `supabase.from('bookings').select('*, profiles(full_name)')` is valid if we have FK set up correctly.
+    // 3. Fetch Bookings for this Doctor
+    const { data: bookings } = await supabase
+        .from('telehealth_bookings')
+        .select(`
+            *,
+            telehealth_slots (
+                start_time,
+                end_time
+            )
+        `)
+        .eq('doctor_id', doctor.id)
+        .order('booking_date', { ascending: true })
 
-    // For now, simple fetch
-    const { data: bookings } = await supabase.from('bookings').select('*, profiles(full_name)')
-
-    return (
-        <div className="min-h-screen bg-gray-50">
-            <nav className="bg-white shadow">
-                <div className="mx-auto max-w-7xl px-4 py-6">
-                    <div className="flex justify-between items-center">
-                        <h1 className="text-3xl font-bold text-blue-900">Doctor Dashboard</h1>
-                        <form action={async () => {
-                            'use server'
-                            const sb = await createClient()
-                            await sb.auth.signOut()
-                            redirect('/')
-                        }}>
-                            <button className="rounded-md bg-red-600 px-4 py-2 text-sm font-bold text-white transition hover:bg-red-700 shadow-sm">
-                                Sign Out
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </nav>
-            <main className="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-                <div className="px-4 py-6 sm:px-0">
-                    <h2 className="text-xl font-semibold mb-4">Appointments</h2>
-                    <div className="bg-white shadow overflow-hidden sm:rounded-md">
-                        <ul className="divide-y divide-gray-200">
-                            {bookings && bookings.length > 0 ? bookings.map((booking: any) => (
-                                <li key={booking.id} className="px-4 py-4 sm:px-6">
-                                    <div className="flex items-center justify-between">
-                                        <p className="text-sm font-medium text-blue-600 truncate">{booking.profiles?.full_name || 'Patient'}</p>
-                                        <div className="ml-2 flex-shrink-0 flex">
-                                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                {booking.status}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="mt-2 sm:flex sm:justify-between">
-                                        <div className="sm:flex">
-                                            <p className="flex items-center text-sm font-bold text-gray-900">
-                                                {booking.appointment_date ? new Date(booking.appointment_date).toLocaleString() : 'No Date'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </li>
-                            )) : (
-                                <li className="px-4 py-8 text-center font-bold text-black">No bookings found.</li>
-                            )}
-                        </ul>
-                    </div>
-                </div>
-            </main>
-        </div>
-    )
+    return <ClientDashboard doctor={doctor} bookings={bookings || []} />
 }
