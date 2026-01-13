@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -36,8 +37,14 @@ export function Navbar() {
             )}
         >
             <div className="container mx-auto flex h-20 items-center justify-between px-6 md:px-12">
-                <Link href="/" className="text-2xl font-bold text-primary flex items-center gap-2">
-                    Healthghar
+                <Link href="/" className="flex items-center gap-2 -ml-10">
+                    <Image
+                        src="/HealthGhar_Logo_Upscaled.svg"
+                        alt="HealthGhar Logo"
+                        width={400}
+                        height={96}
+                        className="h-24 w-auto"
+                    />
                 </Link>
 
                 {/* Desktop Nav */}

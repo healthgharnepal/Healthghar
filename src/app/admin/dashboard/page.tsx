@@ -34,7 +34,7 @@ export default async function AdminDashboard() {
         supabase.from('telehealth_bookings').select('*').order('created_at', { ascending: false }),
 
         supabase.from('upcoming_camps').select('*').order('created_at', { ascending: false }),
-        supabase.from('camp_bookings').select('*').order('created_at', { ascending: false }),
+        supabase.from('camp_bookings').select('*, upcoming_camps(title)').order('created_at', { ascending: false }),
 
         supabase.from('membership_plans').select('*').order('created_at', { ascending: false }),
         supabase.from('telehealth_slots').select('*').order('start_time', { ascending: true }),

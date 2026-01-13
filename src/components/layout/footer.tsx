@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
     return (
@@ -6,8 +7,14 @@ export function Footer() {
             <div className="container mx-auto px-6 md:px-12">
                 <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
                     <div className="col-span-2 md:col-span-1">
-                        <Link href="/" className="text-xl font-bold text-primary">
-                            Healthghar
+                        <Link href="/" className="inline-block">
+                            <Image
+                                src="/HealthGhar_Logo_Upscaled.svg"
+                                alt="HealthGhar Logo"
+                                width={360}
+                                height={96}
+                                className="h-24 w-auto"
+                            />
                         </Link>
                         <p className="mt-4 text-sm text-muted-foreground">
                             Modern healthcare simplified for everyone. Book appointments, manage records, and more.

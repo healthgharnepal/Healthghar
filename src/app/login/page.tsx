@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 
 export default function LoginPage() {
@@ -37,15 +38,24 @@ export default function LoginPage() {
                 className="relative z-10 w-full max-w-md px-6"
             >
                 <Card className="border-white/20 bg-white/30 shadow-2xl backdrop-blur-2xl dark:bg-black/30 dark:border-white/10">
-                    <CardHeader className="text-center space-y-2 pb-6">
-                        <Link href="/" className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors hover:bg-primary/20">
+                    <CardHeader className="relative text-center space-y-2 pb-6 pt-12">
+                        <Link href="/" className="absolute left-6 top-6 flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-600 transition-colors hover:bg-slate-200">
                             <ArrowLeft size={20} />
                         </Link>
+                        <div className="mx-auto mb-6 flex justify-center">
+                            <Image
+                                src="/HealthGhar_Logo_Upscaled.svg"
+                                alt="HealthGhar Logo"
+                                width={720}
+                                height={192}
+                                className="h-48 w-auto"
+                            />
+                        </div>
                         <CardTitle className="text-3xl font-bold tracking-tight">Welcome Back</CardTitle>
                         <CardDescription className="text-base">
                             Sign in to Healthghar to access your dashboard
                         </CardDescription>
-                    </CardHeader>
+                    </CardHeader >
                     <CardContent className="grid gap-4">
                         <Button
                             variant="outline"
@@ -80,8 +90,8 @@ export default function LoginPage() {
                             .
                         </p>
                     </CardFooter>
-                </Card>
-            </motion.div>
-        </div>
+                </Card >
+            </motion.div >
+        </div >
     );
 }

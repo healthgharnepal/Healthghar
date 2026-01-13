@@ -512,6 +512,10 @@ export default function AdminClientView({
                                             <tr key={b.id}>
                                                 <td className="px-6 py-4 text-sm font-bold text-black">
                                                     {b.patient_name} <br />
+                                                    <span className="text-xs text-blue-600 font-semibold block mb-1">
+                                                        {/* @ts-ignore */}
+                                                        {b.upcoming_camps?.title}
+                                                    </span>
                                                     <span className="text-xs text-gray-500">Age: {b.patient_age}</span>
                                                 </td>
                                                 <td className="px-6 py-4 text-sm text-gray-900">
@@ -554,83 +558,85 @@ export default function AdminClientView({
 
 
 
-            {reportingBooking && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6">
-                        <div className="flex justify-between items-center mb-6 border-b pb-2">
-                            <h2 className="text-xl font-bold text-gray-900">{editingReport ? 'Edit Medical Report' : 'Medical Camp Report'}</h2>
-                            <button onClick={() => { setReportingBooking(null); setEditingReport(null); }} className="text-gray-500 hover:text-black">
-                                <X className="h-6 w-6" />
-                            </button>
-                        </div>
+            {
+                reportingBooking && (
+                    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                        <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6">
+                            <div className="flex justify-between items-center mb-6 border-b pb-2">
+                                <h2 className="text-xl font-bold text-gray-900">{editingReport ? 'Edit Medical Report' : 'Medical Camp Report'}</h2>
+                                <button onClick={() => { setReportingBooking(null); setEditingReport(null); }} className="text-gray-500 hover:text-black">
+                                    <X className="h-6 w-6" />
+                                </button>
+                            </div>
 
-                        <form action={async (fd) => {
-                            if (editingReport) await updateCampReport(fd);
-                            else await addCampReport(fd);
-                            setReportingBooking(null);
-                            setEditingReport(null);
-                        }} className="space-y-8">
-                            <input type="hidden" name="bookingId" value={reportingBooking.id} />
-                            <input type="hidden" name="userId" value={reportingBooking.user_id} />
-                            {editingReport && <input type="hidden" name="reportId" value={editingReport.id} />}
+                            <form action={async (fd) => {
+                                if (editingReport) await updateCampReport(fd);
+                                else await addCampReport(fd);
+                                setReportingBooking(null);
+                                setEditingReport(null);
+                            }} className="space-y-8">
+                                <input type="hidden" name="bookingId" value={reportingBooking.id} />
+                                <input type="hidden" name="userId" value={reportingBooking.user_id} />
+                                {editingReport && <input type="hidden" name="reportId" value={editingReport.id} />}
 
-                            {/* Section: Patient Information */}
-                            <div className="space-y-4">
-                                <h3 className="font-bold text-blue-700 uppercase text-sm tracking-wider">Patient Information</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <input name="name" defaultValue={editingReport?.patient_name || reportingBooking.patient_name} placeholder="Name" className="border p-2 rounded text-black" required />
-                                    <input name="age" type="number" defaultValue={editingReport?.patient_age || reportingBooking.patient_age} placeholder="Age" className="border p-2 rounded text-black" />
-                                    <div className="flex items-center gap-4 p-2 border rounded">
-                                        <span className="text-sm text-gray-600">Gender:</span>
-                                        <label className="text-black"><input type="radio" name="gender" value="Male" defaultChecked={(editingReport?.patient_gender || reportingBooking.patient_gender) === 'Male'} /> Male</label>
-                                        <label className="text-black"><input type="radio" name="gender" value="Female" defaultChecked={(editingReport?.patient_gender || reportingBooking.patient_gender) === 'Female'} /> Female</label>
+                                {/* Section: Patient Information */}
+                                <div className="space-y-4">
+                                    <h3 className="font-bold text-blue-700 uppercase text-sm tracking-wider">Patient Information</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <input name="name" defaultValue={editingReport?.patient_name || reportingBooking.patient_name} placeholder="Name" className="border p-2 rounded text-black" required />
+                                        <input name="age" type="number" defaultValue={editingReport?.patient_age || reportingBooking.patient_age} placeholder="Age" className="border p-2 rounded text-black" />
+                                        <div className="flex items-center gap-4 p-2 border rounded">
+                                            <span className="text-sm text-gray-600">Gender:</span>
+                                            <label className="text-black"><input type="radio" name="gender" value="Male" defaultChecked={(editingReport?.patient_gender || reportingBooking.patient_gender) === 'Male'} /> Male</label>
+                                            <label className="text-black"><input type="radio" name="gender" value="Female" defaultChecked={(editingReport?.patient_gender || reportingBooking.patient_gender) === 'Female'} /> Female</label>
+                                        </div>
+                                        <input name="phone" type="tel" defaultValue={editingReport?.patient_phone || reportingBooking.patient_contact} placeholder="Phone Number" className="border p-2 rounded text-black" />
+                                        <input name="ward" defaultValue={editingReport?.patient_ward} placeholder="Ward" className="border p-2 rounded text-black" />
+                                        <textarea name="address" defaultValue={editingReport?.patient_address} placeholder="Address" className="border p-2 rounded text-black md:col-span-2" rows={2} />
                                     </div>
-                                    <input name="phone" type="tel" defaultValue={editingReport?.patient_phone || reportingBooking.patient_contact} placeholder="Phone Number" className="border p-2 rounded text-black" />
-                                    <input name="ward" defaultValue={editingReport?.patient_ward} placeholder="Ward" className="border p-2 rounded text-black" />
-                                    <textarea name="address" defaultValue={editingReport?.patient_address} placeholder="Address" className="border p-2 rounded text-black md:col-span-2" rows={2} />
+                                    <div className="flex flex-wrap gap-4 p-3 bg-gray-50 rounded border">
+                                        <span className="text-sm font-semibold text-gray-700">Departments:</span>
+                                        {['Dental', 'ENT', 'General'].map(dept => (
+                                            <label key={dept} className="flex items-center gap-1 text-black text-sm">
+                                                <input type="checkbox" name="departments" value={dept} defaultChecked={editingReport?.departments?.includes(dept)} /> {dept}
+                                            </label>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="flex flex-wrap gap-4 p-3 bg-gray-50 rounded border">
-                                    <span className="text-sm font-semibold text-gray-700">Departments:</span>
-                                    {['Dental', 'ENT', 'General'].map(dept => (
-                                        <label key={dept} className="flex items-center gap-1 text-black text-sm">
-                                            <input type="checkbox" name="departments" value={dept} defaultChecked={editingReport?.departments?.includes(dept)} /> {dept}
-                                        </label>
-                                    ))}
+
+                                {/* Section: Vitals */}
+                                <div className="space-y-4">
+                                    <h3 className="font-bold text-blue-700 uppercase text-sm tracking-wider">Vitals</h3>
+                                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">BP (120/80)</label><input name="bp" defaultValue={editingReport?.vital_bp} className="border p-2 rounded text-black" /></div>
+                                        <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">Sugar (70-140)</label><input name="bloodSugar" type="number" defaultValue={editingReport?.vital_blood_sugar} className="border p-2 rounded text-black" /></div>
+                                        <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">Weight (kg)</label><input name="weight" type="number" defaultValue={editingReport?.vital_weight} className="border p-2 rounded text-black" /></div>
+                                        <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">Temp (36.5-37.5)</label><input name="temp" type="number" step="0.1" defaultValue={editingReport?.vital_temp} className="border p-2 rounded text-black" /></div>
+                                        <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">SpO2 (≥95%)</label><input name="spo2" type="number" defaultValue={editingReport?.vital_spo2} className="border p-2 rounded text-black" /></div>
+                                        <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">Pulse (60-100)</label><input name="pulse" type="number" defaultValue={editingReport?.vital_pulse} className="border p-2 rounded text-black" /></div>
+                                    </div>
                                 </div>
-                            </div>
 
-                            {/* Section: Vitals */}
-                            <div className="space-y-4">
-                                <h3 className="font-bold text-blue-700 uppercase text-sm tracking-wider">Vitals</h3>
-                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">BP (120/80)</label><input name="bp" defaultValue={editingReport?.vital_bp} className="border p-2 rounded text-black" /></div>
-                                    <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">Sugar (70-140)</label><input name="bloodSugar" type="number" defaultValue={editingReport?.vital_blood_sugar} className="border p-2 rounded text-black" /></div>
-                                    <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">Weight (kg)</label><input name="weight" type="number" defaultValue={editingReport?.vital_weight} className="border p-2 rounded text-black" /></div>
-                                    <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">Temp (36.5-37.5)</label><input name="temp" type="number" step="0.1" defaultValue={editingReport?.vital_temp} className="border p-2 rounded text-black" /></div>
-                                    <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">SpO2 (≥95%)</label><input name="spo2" type="number" defaultValue={editingReport?.vital_spo2} className="border p-2 rounded text-black" /></div>
-                                    <div className="flex flex-col"><label className="text-xs font-bold text-gray-500">Pulse (60-100)</label><input name="pulse" type="number" defaultValue={editingReport?.vital_pulse} className="border p-2 rounded text-black" /></div>
+                                {/* Section: Doctor's Advice */}
+                                <div className="space-y-2">
+                                    <h3 className="font-bold text-blue-700 uppercase text-sm tracking-wider">Doctor's Advice</h3>
+                                    <textarea name="advice" defaultValue={editingReport?.doctors_advice} className="w-full border p-2 rounded text-black h-32" placeholder="Enter clinical notes and recommendations..." required />
                                 </div>
-                            </div>
 
-                            {/* Section: Doctor's Advice */}
-                            <div className="space-y-2">
-                                <h3 className="font-bold text-blue-700 uppercase text-sm tracking-wider">Doctor's Advice</h3>
-                                <textarea name="advice" defaultValue={editingReport?.doctors_advice} className="w-full border p-2 rounded text-black h-32" placeholder="Enter clinical notes and recommendations..." required />
-                            </div>
+                                {/* Section: Authentication */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
+                                    <input name="doctorName" defaultValue={editingReport?.doctor_name} placeholder="Doctor Name" className="border p-2 rounded text-black font-bold" required />
+                                    <input name="signature" defaultValue={editingReport?.doctor_signature} placeholder="Doctor Signature (Text)" className="border p-2 rounded text-black italic" required />
+                                </div>
 
-                            {/* Section: Authentication */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
-                                <input name="doctorName" defaultValue={editingReport?.doctor_name} placeholder="Doctor Name" className="border p-2 rounded text-black font-bold" required />
-                                <input name="signature" defaultValue={editingReport?.doctor_signature} placeholder="Doctor Signature (Text)" className="border p-2 rounded text-black italic" required />
-                            </div>
-
-                            <button type="submit" className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-colors">
-                                {editingReport ? 'Update Report' : 'Save and Issue Report'}
-                            </button>
-                        </form>
+                                <button type="submit" className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition-colors">
+                                    {editingReport ? 'Update Report' : 'Save and Issue Report'}
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             <style jsx global>{`
                 @media print {
@@ -654,6 +660,6 @@ export default function AdminClientView({
                     }
                 }
             `}</style>
-        </div>
+        </div >
     )
 }
