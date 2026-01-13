@@ -188,3 +188,76 @@ export async function deleteMembership(id: string) {
     await supabase.from('membership_plans').delete().eq('id', id)
     revalidatePath('/admin/dashboard')
 }
+
+// 5. Camp Reports
+export async function addCampReport(formData: FormData) {
+    const supabase = getService(); // Uses service role to bypass RLS for admin actions
+
+    // Process checkbox group for departments
+    const departments = formData.getAll('departments').map(d => String(d));
+
+    const reportPayload = {
+        booking_id: String(formData.get('bookingId')),
+        user_id: String(formData.get('userId')),
+        patient_name: String(formData.get('name')),
+        patient_age: Number(formData.get('age')),
+        patient_gender: String(formData.get('gender')),
+        patient_address: String(formData.get('address')),
+        patient_phone: String(formData.get('phone')),
+        patient_ward: String(formData.get('ward')),
+        departments: departments,
+        vital_bp: String(formData.get('bp')),
+        vital_blood_sugar: Number(formData.get('bloodSugar')),
+        vital_weight: Number(formData.get('weight')),
+        vital_temp: Number(formData.get('temp')),
+        vital_spo2: Number(formData.get('spo2')),
+        vital_pulse: Number(formData.get('pulse')),
+        doctors_advice: String(formData.get('advice')),
+        doctor_signature: String(formData.get('signature')),
+        doctor_name: String(formData.get('doctorName')),
+    };
+
+    const { error } = await supabase.from('camp_reports').insert(reportPayload);
+
+    if (error) {
+        console.error('Error adding camp report:', error);
+        throw new Error('Failed to save report');
+    }
+
+    revalidatePath('/admin/dashboard');
+}
+
+export async function updateCampReport(formData: FormData) {
+    const supabase = getService();
+
+    const reportId = String(formData.get('reportId'));
+    const departments = formData.getAll('departments').map(d => String(d));
+
+    const reportPayload = {
+        patient_name: String(formData.get('name')),
+        patient_age: Number(formData.get('age')),
+        patient_gender: String(formData.get('gender')),
+        patient_address: String(formData.get('address')),
+        patient_phone: String(formData.get('phone')),
+        patient_ward: String(formData.get('ward')),
+        departments: departments,
+        vital_bp: String(formData.get('bp')),
+        vital_blood_sugar: Number(formData.get('bloodSugar')),
+        vital_weight: Number(formData.get('weight')),
+        vital_temp: Number(formData.get('temp')),
+        vital_spo2: Number(formData.get('spo2')),
+        vital_pulse: Number(formData.get('pulse')),
+        doctors_advice: String(formData.get('advice')),
+        doctor_signature: String(formData.get('signature')),
+        doctor_name: String(formData.get('doctorName')),
+    };
+
+    const { error } = await supabase.from('camp_reports').update(reportPayload).eq('id', reportId);
+
+    if (error) {
+        console.error('Error updating camp report:', error);
+        throw new Error('Failed to update report');
+    }
+
+    revalidatePath('/admin/dashboard');
+}

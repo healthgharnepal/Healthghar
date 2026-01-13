@@ -52,7 +52,7 @@ export default async function UserHome() {
             icon: FileText,
             color: 'text-orange-600',
             bg: 'bg-orange-100/50 dark:bg-orange-900/20',
-            href: '#',
+            href: '/user/reports',
             delay: 'delay-[400ms]'
         },
     ];

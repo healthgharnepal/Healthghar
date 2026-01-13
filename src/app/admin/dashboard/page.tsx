@@ -21,7 +21,8 @@ export default async function AdminDashboard() {
         { data: upcomingCamps },
         { data: bookingsCamp },
         { data: memberships },
-        { data: teleSlots }
+        { data: teleSlots },
+        { data: campReports }
     ] = await Promise.all([
         supabase.from('doctors').select('*').order('created_at', { ascending: false }),
         supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('role', 'user'),
@@ -35,10 +36,9 @@ export default async function AdminDashboard() {
         supabase.from('upcoming_camps').select('*').order('created_at', { ascending: false }),
         supabase.from('camp_bookings').select('*').order('created_at', { ascending: false }),
 
-        supabase.from('camp_bookings').select('*').order('created_at', { ascending: false }),
-
         supabase.from('membership_plans').select('*').order('created_at', { ascending: false }),
-        supabase.from('telehealth_slots').select('*').order('start_time', { ascending: true })
+        supabase.from('telehealth_slots').select('*').order('start_time', { ascending: true }),
+        supabase.from('camp_reports').select('*')
     ])
 
     return (
@@ -66,6 +66,7 @@ export default async function AdminDashboard() {
                     camps={upcomingCamps || []}
                     campBookings={bookingsCamp || []}
                     memberships={memberships || []}
+                    campReports={campReports || []}
                 />
             </main>
         </div>
