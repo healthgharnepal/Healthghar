@@ -15,6 +15,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "HealthGhar",
   description: "Virtual Care, Real Connections. Expert healthcare at your fingertips.",
+  icons: {
+    icon: "/HealthGhar_Logo_Upscaled.svg",
+  },
 };
 
 export default function RootLayout({
