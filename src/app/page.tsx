@@ -1,7 +1,6 @@
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { Hero } from "@/components/home/hero";
-import { Features } from "@/components/home/features";
 
 export default function LandingPage() {
   return (
@@ -9,7 +8,7 @@ export default function LandingPage() {
       <Navbar />
       <main className="flex-1">
         <Hero />
-        <Features />
+
 
         {/* Floating Admin Button */}
         <div className="fixed bottom-6 right-6 z-50">

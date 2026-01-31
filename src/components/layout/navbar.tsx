@@ -21,8 +21,8 @@ export function Navbar() {
     }, []);
 
     const navLinks = [
-        { href: "#", label: "About" },
-        { href: "#", label: "Services" },
+        { href: "/about", label: "About" },
+        { href: "/services", label: "Services" },
         { href: "#", label: "Doctors" },
         { href: "#", label: "Contact" },
     ];
